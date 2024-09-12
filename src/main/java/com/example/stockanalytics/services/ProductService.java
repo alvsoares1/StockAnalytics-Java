@@ -3,9 +3,9 @@ package com.example.stockanalytics.services;
 import com.example.stockanalytics.Repositories.ProductRepository;
 import com.example.stockanalytics.dtos.ProductCreateDTO;
 import com.example.stockanalytics.entities.Product;
+import com.example.stockanalytics.exceptions.ProductNotFoundException;
+import com.example.stockanalytics.exceptions.ProductAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,63 +14,53 @@ import java.util.Optional;
 @Service
 public class ProductService {
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
-    public ResponseEntity<Product> createProduct(ProductCreateDTO data) {
-        Optional<Product> product = this.productRepository.findByName(data.name());
+    public Product createProduct(ProductCreateDTO data) {
+        Optional<Product> existingProduct = productRepository.findByName(data.name());
 
-        if(product.isPresent()) {
-            return ResponseEntity.badRequest().build();
+        if (existingProduct.isPresent()) {
+            throw new ProductAlreadyExistsException("Produto já existe com o nome: " + data.name());
         }
+
         Product newProduct = new Product();
         newProduct.setName(data.name());
         newProduct.setPrice(data.price());
         newProduct.setQuantity(data.quantity());
-        this.productRepository.save(newProduct);
-        return ResponseEntity.ok(newProduct);
+        return productRepository.save(newProduct);
     }
 
-    public ResponseEntity<Product> updateProduct(Long id, ProductCreateDTO data) {
-        Optional<Product> product = this.productRepository.findById(id);
+    public Product updateProduct(Long id, ProductCreateDTO data) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com o id: " + id));
 
-        if(product.isPresent()) {
-            Product existingProduct = product.get();
-            existingProduct.setName(data.name());
-            existingProduct.setPrice(data.price());
-            existingProduct.setQuantity(data.quantity());
-
-            this.productRepository.save(existingProduct);
-            return ResponseEntity.ok(existingProduct);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        existingProduct.setName(data.name());
+        existingProduct.setPrice(data.price());
+        existingProduct.setQuantity(data.quantity());
+        return productRepository.save(existingProduct);
     }
 
     public List<Product> getAllProducts() {
-        return this.productRepository.findAll();
+        return productRepository.findAll();
     }
 
     public boolean deleteProduct(Long id) {
-        if(productRepository.existsById(id)){
+        if (productRepository.existsById(id)) {
             productRepository.deleteById(id);
             return true;
-        }else{
-            return false;
+        } else {
+            throw new ProductNotFoundException("Produto não encontrado com o id: " + id);
         }
     }
 
-    public ResponseEntity<String> checkProductStock(Long id) {
-        Optional<Product> product = productRepository.findById(id);
+    public String checkProductStock(Long id) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com o id: " + id));
 
-        if(product.isPresent()){
-            Product existingProduct = product.get();
-            if(existingProduct.getQuantity() < 10){
-                return ResponseEntity.ok("Precisa reabastecer o estoque");
-            }else{
-                return ResponseEntity.ok("Estoque OK");
-            }
-        }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+        if (existingProduct.getQuantity() < 10) {
+            return "Precisa reabastecer o estoque";
+        } else {
+            return "Estoque OK";
         }
     }
 }
