@@ -31,6 +31,23 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/listQuantity/{quantity}")
+    public ResponseEntity<List<Product>> listAllProductsByQuantity(@PathVariable Integer quantity) {
+        List<Product> products = productService.getProductsByQuantity(quantity);
+        return ResponseEntity.ok(products);
+    }
+    @GetMapping("/listPrice/{price}")
+    public ResponseEntity<List<Product>> listAllProductsByPrice(@PathVariable Double price) {
+        List<Product> products = productService.getProductsByPrice(price);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/listName/{name}")
+    public ResponseEntity<List<Product>> listAllProductsByName(@PathVariable String name) {
+        List<Product> products = productService.getProductsByName(name);
+        return ResponseEntity.ok(products);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);

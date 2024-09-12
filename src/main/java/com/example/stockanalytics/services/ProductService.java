@@ -20,7 +20,7 @@ public class ProductService {
         Optional<Product> existingProduct = productRepository.findByName(data.name());
 
         if (existingProduct.isPresent()) {
-            throw new ProductAlreadyExistsException("Produto já existe com o nome: " + data.name());
+            throw new ProductAlreadyExistsException("" + data.name());
         }
 
         Product newProduct = new Product();
@@ -32,7 +32,7 @@ public class ProductService {
 
     public Product updateProduct(Long id, ProductCreateDTO data) {
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com o id: " + id));
+                .orElseThrow(() -> new ProductNotFoundException("" + id));
 
         existingProduct.setName(data.name());
         existingProduct.setPrice(data.price());
@@ -44,18 +44,29 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public boolean deleteProduct(Long id) {
+    public List<Product> getProductsByPrice(double price) {
+        return productRepository.getAllByPrice(price);
+    }
+
+    public List<Product> getProductsByName(String name) {
+        return productRepository.getAllByName(name);
+    }
+
+    public List<Product> getProductsByQuantity(int quantity) {
+        return productRepository.getAllByQuantity(quantity);
+    }
+
+    public void deleteProduct(Long id) {
         if (productRepository.existsById(id)) {
             productRepository.deleteById(id);
-            return true;
         } else {
-            throw new ProductNotFoundException("Produto não encontrado com o id: " + id);
+            throw new ProductNotFoundException("" + id);
         }
     }
 
     public String checkProductStock(Long id) {
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Produto não encontrado com o id: " + id));
+                .orElseThrow(() -> new ProductNotFoundException("" + id));
 
         if (existingProduct.getQuantity() < 10) {
             return "Precisa reabastecer o estoque";
