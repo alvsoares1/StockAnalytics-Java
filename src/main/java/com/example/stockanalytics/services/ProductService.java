@@ -58,4 +58,19 @@ public class ProductService {
             return false;
         }
     }
+
+    public ResponseEntity<String> checkProductStock(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+
+        if(product.isPresent()){
+            Product existingProduct = product.get();
+            if(existingProduct.getQuantity() < 10){
+                return ResponseEntity.ok("Precisa reabastecer o estoque");
+            }else{
+                return ResponseEntity.ok("Estoque OK");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+        }
+    }
 }

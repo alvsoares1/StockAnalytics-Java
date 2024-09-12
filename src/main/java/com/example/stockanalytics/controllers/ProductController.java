@@ -41,4 +41,9 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @GetMapping("/check-stock/{id}")
+    public ResponseEntity<String> checkStock(@PathVariable Long id) {
+        return productService.checkProductStock(id);
+    }
 }

@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/product/update/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/product/list").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/product/delete/**").authenticated()
+                        .requestMatchers(HttpMethod.GET,"product/check-stock/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
