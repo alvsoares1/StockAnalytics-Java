@@ -16,21 +16,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<?> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request) {
-        String errorMessage = "Product not found: " + ex.getMessage();
+        String errorMessage = ex.getMessage();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), errorMessage, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ProductAlreadyExistsException.class)
     public ResponseEntity<?> handleProductAlreadyExistsException(ProductAlreadyExistsException ex, WebRequest request) {
-        String errorMessage = "Product already exists: " + ex.getMessage();
+        String errorMessage = ex.getMessage();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), errorMessage, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {
-        String errorMessage = "An unexpected error occurred: " + ex.getMessage();
+        String errorMessage = ex.getMessage();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), errorMessage, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
