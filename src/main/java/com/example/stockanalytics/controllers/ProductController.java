@@ -2,6 +2,7 @@ package com.example.stockanalytics.controllers;
 
 import com.example.stockanalytics.dtos.ProductCreateDTO;
 import com.example.stockanalytics.entities.Product;
+import com.example.stockanalytics.entities.ProductType;
 import com.example.stockanalytics.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,11 @@ public class ProductController {
     public ResponseEntity<List<Product>> listAllProductsByPrice(@PathVariable Double price) {
         List<Product> products = productService.getProductsByPrice(price);
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/listType/{type}")
+    public List<Product> getProductsByType(@PathVariable ProductType type) {
+        return productService.getProductsByType(type);
     }
 
     @GetMapping("/listName/{name}")

@@ -1,6 +1,7 @@
 package com.example.stockanalytics.Repositories;
 
 import com.example.stockanalytics.entities.Product;
+import com.example.stockanalytics.entities.ProductType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getAllByPrice(Double price);
     List<Product> getAllByName(String name);
     List<Product> getAllByQuantity(int quantity);
+    List<Product> getAllByProductType(ProductType type);;
 }

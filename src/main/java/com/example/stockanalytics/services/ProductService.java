@@ -3,6 +3,7 @@
     import com.example.stockanalytics.Repositories.ProductRepository;
     import com.example.stockanalytics.dtos.ProductCreateDTO;
     import com.example.stockanalytics.entities.Product;
+    import com.example.stockanalytics.entities.ProductType;
     import com.example.stockanalytics.exceptions.ProductNotFoundException;
     import com.example.stockanalytics.exceptions.ProductAlreadyExistsException;
     import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@
             newProduct.setName(data.name());
             newProduct.setPrice(data.price());
             newProduct.setQuantity(data.quantity());
+            newProduct.setProductType(data.type());
             return productRepository.save(newProduct);
         }
 
@@ -37,6 +39,7 @@
             existingProduct.setName(data.name());
             existingProduct.setPrice(data.price());
             existingProduct.setQuantity(data.quantity());
+            existingProduct.setProductType(data.type());
             return productRepository.save(existingProduct);
         }
 
@@ -54,6 +57,10 @@
 
         public List<Product> getProductsByQuantity(int quantity) {
             return productRepository.getAllByQuantity(quantity);
+        }
+
+        public List<Product> getProductsByType(ProductType type) {
+            return productRepository.getAllByProductType(type);
         }
 
         public void deleteProduct(Long id) {
