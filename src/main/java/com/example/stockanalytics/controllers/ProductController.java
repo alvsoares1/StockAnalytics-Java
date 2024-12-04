@@ -62,6 +62,7 @@ public class ProductController {
 
     @GetMapping("/check-stock/{id}")
     public ResponseEntity<String> checkStock(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.checkProductStock(id));
+        String stockStatus = productService.checkProductStock(id);
+        return ResponseEntity.ok(stockStatus);
     }
 }

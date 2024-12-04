@@ -4,8 +4,8 @@
     import com.example.stockanalytics.dtos.ProductCreateDTO;
     import com.example.stockanalytics.entities.Product;
     import com.example.stockanalytics.entities.ProductType;
-    import com.example.stockanalytics.exceptions.ProductNotFoundException;
     import com.example.stockanalytics.exceptions.ProductAlreadyExistsException;
+    import com.example.stockanalytics.exceptions.ProductNotFoundException;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@
             Optional<Product> existingProduct = productRepository.findByName(data.name());
 
             if (existingProduct.isPresent()) {
-                throw new ProductAlreadyExistsException("Product with name " + data.name() + " already exists.");
+                throw new ProductAlreadyExistsException();
             }
 
             Product newProduct = new Product();
@@ -34,7 +34,7 @@
 
         public Product updateProduct(Long id, ProductCreateDTO data) {
             Product existingProduct = productRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found."));
+                    .orElseThrow(ProductNotFoundException::new);
 
             existingProduct.setName(data.name());
             existingProduct.setPrice(data.price());
@@ -67,13 +67,13 @@
             if (productRepository.existsById(id)) {
                 productRepository.deleteById(id);
             } else {
-                throw new ProductNotFoundException("Product with ID " + id + " not found.");
+                throw new ProductNotFoundException();
             }
         }
 
         public String checkProductStock(Long id) {
             Product existingProduct = productRepository.findById(id)
-                    .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found."));
+                    .orElseThrow(ProductNotFoundException::new);
 
             if (existingProduct.getQuantity() < 10) {
                 return "Precisa reabastecer o estoque";
